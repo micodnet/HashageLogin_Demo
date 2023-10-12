@@ -41,9 +41,11 @@ namespace DAL
             try
             {
                 string MdpUser = "pass";
-                string MdpDb = "PasswordHsh";
 
-                bool motDePasseValide = Hash.VerifyPassword(MdpUser, MdpDb);
+                string sqlCheckPassword = "SELECT Psswd FROM Users WHERE Email = @email";
+                string hashpwd =  _dbConnection.QueryFirst<string>(sqlCheckPassword, new {email});
+
+                bool motDePasseValide = Hash.VerifyPassword(MdpUser, hashpwd);
 
                 if (motDePasseValide)
                 {

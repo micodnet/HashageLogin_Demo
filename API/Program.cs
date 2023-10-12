@@ -16,7 +16,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IDbConnection, SqlConnection>(sp => new SqlConnection(builder.Configuration.GetConnectionString("default")));
+string _cs = builder.Configuration.GetConnectionString("default");
+
+builder.Services.AddTransient<IDbConnection, SqlConnection>(sp => new SqlConnection(_cs));
 builder.Services.AddScoped<IService, UserService>();
 builder.Services.AddScoped<IRepository, UserRepository>();
 

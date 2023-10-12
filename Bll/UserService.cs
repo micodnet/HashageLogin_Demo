@@ -12,7 +12,7 @@ namespace Bll
 
         public IEnumerable<UserModel> GetUsers()
         {
-            return (IEnumerable<UserModel>)_userRepository.GetUsers();
+            return _userRepository.GetUsers().Select(x => x.DalToBll());
         }
         public void RegisterUser(string lastName, string firstName, string nickname, string email, string psswd)
         {
