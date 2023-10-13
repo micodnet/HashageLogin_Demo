@@ -41,7 +41,19 @@ namespace API.Controllers
             try
             {
                 UserModel connectedUser = _userService.LoginUser(user.Email, user.Psswd);
-                return Ok(_tokenGenerator.GenerateToken(connectedUser));
+                string MdpUser = user.Psswd;
+                string hashpwd = connectedUser.Psswd;
+                bool motDePasseValide = BCrypt.Net.BCrypt.Verify(MdpUser, hashpwd);
+                    
+                if (motDePasseValide)
+                {
+                    return Ok(_tokenGenerator.GenerateToken(connectedUser));
+                }
+                else
+                {
+                    return BadRequest();
+                }
+               
             }
             catch (Exception ex)
             {

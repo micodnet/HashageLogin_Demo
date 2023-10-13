@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
@@ -27,8 +28,9 @@ namespace DAL
 
         public void RegisterUser(string lastName, string firstName, string nickname, string email, string psswd)
         {
-            string pass = "Psswd";
-            string PasswordHash = Hash.HashPassword(pass);
+            //string pass = psswd;
+            string PasswordHash = BCrypt.Net.BCrypt.HashPassword(psswd);
+                //Hash.HashPassword(pass);
             string sql = "INSERT INTO Users (LastName, FirstName, NickName, Email, Psswd)" +
                 " VALUES (@lastName, @firstName, @nickName, @email, @PasswordHash)";
             var param = new { lastName, firstName, nickname, email, PasswordHash };
@@ -40,23 +42,9 @@ namespace DAL
         {
             try
             {
-                string MdpUser = "pass";
-
-                string sqlCheckPassword = "SELECT Psswd FROM Users WHERE Email = @email";
-                string hashpwd =  _dbConnection.QueryFirst<string>(sqlCheckPassword, new {email});
-
-                bool motDePasseValide = Hash.VerifyPassword(MdpUser, hashpwd);
-
-                if (motDePasseValide)
-                {
-                    string sql = "SELECT * FROM Users WHERE Email = @email AND " +
-                    "Psswd = @psswd";
-                    var param = new { email, psswd };
-                    _dbConnection.QueryFirst<UserEntity>(sql, param);
-                    
-                   
-                }
-                return LoginUser(email, psswd);
+                string sqlCheckPassword = "SELECT * FROM Users WHERE Email = @email";
+                return _dbConnection.QueryFirst<UserEntity>(sqlCheckPassword, new {email});
+                
             }
             catch (Exception ex)
             {
